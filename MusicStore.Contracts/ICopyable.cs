@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+//@CodeCopy
+//MdStart
 namespace MusicStore.Contracts
 {
-	public interface ICopyable<T>
+	public partial interface ICopyable<T>
 	{
 		void CopyProperties(T other);
 	}
 }
+//MdEnd

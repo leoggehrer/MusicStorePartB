@@ -1,10 +1,11 @@
-﻿using System;
+//@CodeCopy
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CommonBase.Extensions
 {
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         public static bool HasContent(this string source)
         {

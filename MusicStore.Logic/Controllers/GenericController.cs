@@ -1,4 +1,6 @@
-﻿using System;
+//@CodeCopy
+//MdStart
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MusicStore.Contracts.Client;
@@ -6,6 +8,12 @@ using MusicStore.Logic.DataContext;
 
 namespace MusicStore.Logic.Controllers
 {
+    /// <inheritdoc cref="IControllerAccess{T}"/>
+    /// <summary>
+    /// This generic class implements the base properties and operations defined in the interface. 
+    /// </summary>
+    /// <typeparam name="E">The entity type of element in the controller.</typeparam>
+    /// <typeparam name="I">The interface type which implements the entity.</typeparam>
     internal abstract partial class GenericController<E, I> : ControllerObject, IControllerAccess<I>
         where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
         where I : Contracts.IIdentifiable
@@ -24,20 +32,23 @@ namespace MusicStore.Logic.Controllers
         }
 
         #region Sync-Methods
+        /// <inheritdoc />
         public int Count()
         {
             return Context.Count<I, E>();
         }
+        /// <inheritdoc />
         public virtual IEnumerable<I> GetAll()
         {
             return Set.Select(i =>
-            {
-                var result = new E();
+                      {
+                          var result = new E();
 
-                result.CopyProperties(i);
-                return result;
-            });
+                          result.CopyProperties(i);
+                          return result;
+                      });
         }
+        /// <inheritdoc />
         public virtual I GetById(int id)
         {
             var result = default(E);
@@ -50,6 +61,7 @@ namespace MusicStore.Logic.Controllers
             }
             return result;
         }
+        /// <inheritdoc />
         public virtual I Create()
         {
             return new E();
@@ -59,6 +71,7 @@ namespace MusicStore.Logic.Controllers
         {
 
         }
+        /// <inheritdoc />
         public virtual I Insert(I entity)
         {
             if (entity == null)
@@ -78,6 +91,7 @@ namespace MusicStore.Logic.Controllers
         {
 
         }
+        /// <inheritdoc />
         public virtual void Update(I entity)
         {
             if (entity == null)
@@ -104,6 +118,7 @@ namespace MusicStore.Logic.Controllers
         {
 
         }
+        /// <inheritdoc />
         public void Delete(int id)
         {
             BeforeDeleting(id);
@@ -119,6 +134,7 @@ namespace MusicStore.Logic.Controllers
 
         }
 
+        /// <inheritdoc />
         public void SaveChanges()
         {
             Context.Save();
@@ -126,3 +142,4 @@ namespace MusicStore.Logic.Controllers
         #endregion Sync-Methods
     }
 }
+//MdEnd

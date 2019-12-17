@@ -1,4 +1,5 @@
-﻿namespace MusicStore.Contracts.Persistence
+﻿//MdStart
+namespace MusicStore.Contracts.Persistence
 {
 	public interface ITrack : IIdentifiable
     {
@@ -11,3 +12,4 @@
         double UnitPrice { get; set; }
     }
 }
+//MdEnd

@@ -1,11 +1,12 @@
-﻿using System;
+//@CodeCopy
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
 namespace CommonBase.Extensions
 {
-    public static class CreaterExtensions
+    public static partial class CreaterExtensions
     {
         private static Dictionary<Type, Dictionary<string, PropertyInfo>> MappingInfos { get; } = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 

@@ -1,4 +1,5 @@
-﻿namespace MusicStore.Contracts.Persistence
+﻿//MdStart
+namespace MusicStore.Contracts.Persistence
 {
 	public interface IAlbum : IIdentifiable
     {
@@ -6,3 +7,4 @@
         string Title { get; set; }
     }
 }
+//MdEnd

@@ -1,4 +1,6 @@
-﻿using System;
+//@CodeCopy
+//MdStart
+using System;
 using System.Collections.Generic;
 
 namespace MusicStore.Contracts.Client
@@ -42,12 +44,12 @@ namespace MusicStore.Contracts.Client
         /// The entity is being tracked by the context and exists in the repository, and some or all of its property values have been modified.
         /// </summary>
         /// <param name="entity">The entity which is to be updated.</param>
-		void Update(T entity);
+        void Update(T entity);
         /// <summary>
         /// Removes the entity from the repository with the appropriate identity.
         /// </summary>
         /// <param name="id">The identification.</param>
-		void Delete(int id);
+        void Delete(int id);
         /// <summary>
         /// Saves any changes in the underlying persistence.
         /// </summary>
@@ -55,3 +57,4 @@ namespace MusicStore.Contracts.Client
         #endregion Sync-Methods
     }
 }
+//MdEnd

@@ -1,4 +1,5 @@
-﻿using System;
+//@CodeCopy
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,7 @@ using CommonBase.Extensions;
 
 namespace CommonBase.Helpers
 {
-    public static class FileHelper
+    public static partial class FileHelper
     {
         internal static string Separator = ";";
 
