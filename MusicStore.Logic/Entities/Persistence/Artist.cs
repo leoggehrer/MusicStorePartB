@@ -1,18 +1,17 @@
-﻿using System;
+//@CodeCopy
+//MdStart
+using System;
 using System.Collections.Generic;
-using MusicStore.Contracts;
 
 namespace MusicStore.Logic.Entities.Persistence
 {
-	/// <inheritdoc />
-	/// <summary>
-	/// Implements the properties and methods of artist model.
-	/// </summary>
-	[Serializable]
-    partial class Artist : IdentityObject, Contracts.Persistence.IArtist, ICopyable<Contracts.Persistence.IArtist>
+    /// <summary>
+    /// Implements the properties and methods of artist model.
+    /// </summary>
+    [Serializable]
+    partial class Artist : IdentityObject, Contracts.Persistence.IArtist
     {
-		/// <inheritdoc />
-		public string Name { get; set; }
+        public string Name { get; set; }
 
 		public void CopyProperties(Contracts.Persistence.IArtist other)
 		{
@@ -26,3 +25,4 @@ namespace MusicStore.Logic.Entities.Persistence
 		public IEnumerable<Album> Albums { get; set; }
 	}
 }
+//MdEnd
