@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿//@BaseCode
+//MdStart
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MusicStore.Contracts;
 using MusicStore.Logic.Entities;
@@ -50,3 +52,4 @@ namespace MusicStore.Logic.DataContext.Db
         #endregion IContext
     }
 }
+//MdEnd

@@ -1,6 +1,6 @@
-﻿using System.Linq;
+//@CodeCopy
+//MdStart
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MusicStore.Logic.DataContext.Ser
 {
@@ -26,3 +26,4 @@ namespace MusicStore.Logic.DataContext.Ser
         #endregion Sync-Methods
     }
 }
+//MdEnd

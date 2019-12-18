@@ -1,6 +1,7 @@
-﻿using MusicStore.Contracts;
+//@CodeCopy
+//MdStart
+using MusicStore.Contracts;
 using MusicStore.Logic.Entities;
-using System.Threading.Tasks;
 
 namespace MusicStore.Logic.DataContext
 {
@@ -62,3 +63,4 @@ namespace MusicStore.Logic.DataContext
         #endregion
     }
 }
+//MdEnd

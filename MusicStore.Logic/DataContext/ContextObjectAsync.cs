@@ -1,4 +1,6 @@
-﻿using MusicStore.Contracts;
+﻿//@BaseCode
+//MdStart
+using MusicStore.Contracts;
 using MusicStore.Logic.Entities;
 using System.Threading.Tasks;
 
@@ -26,3 +28,4 @@ namespace MusicStore.Logic.DataContext
         #endregion Async-Methods
     }
 }
+//MdEnd

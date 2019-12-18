@@ -1,4 +1,6 @@
-﻿using System;
+//@CodeCopy
+//MdStart
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommonBase.Extensions;
@@ -6,11 +8,11 @@ using CommonBase.Helpers;
 
 namespace MusicStore.Logic.DataContext
 {
-    internal abstract class FileContext : ContextObject
+    internal abstract partial class FileContext : ContextObject
     {
         public string CsvFolderName => "CsvData";
         public string SerFolderName => "SerData";
-
+        
         protected IEnumerable<T> GetSaveItems<T>(IEnumerable<T> source) where T : Entities.IdentityObject
         {
             if (source == null)
@@ -60,3 +62,4 @@ namespace MusicStore.Logic.DataContext
         }
     }
 }
+//MdEnd

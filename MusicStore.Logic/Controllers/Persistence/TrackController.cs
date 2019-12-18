@@ -1,4 +1,5 @@
-﻿//MdStart
+//@CodeCopy
+//MdStart
 using System.Collections.Generic;
 using MusicStore.Logic.DataContext;
 

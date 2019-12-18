@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+//@CodeCopy
+//MdStart
+using System.Collections.Generic;
 using MusicStore.Logic.Entities.Persistence;
 
 namespace MusicStore.Logic.DataContext
 {
-    internal interface IMusicStoreContext
+    internal partial interface IMusicStoreContext
     {
         IEnumerable<Genre> Genres { get; }
         IEnumerable<Artist> Artists { get; }
@@ -11,3 +13,4 @@ namespace MusicStore.Logic.DataContext
         IEnumerable<Track> Tracks { get; }
     }
 }
+//MdEnd

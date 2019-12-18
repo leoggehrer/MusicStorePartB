@@ -1,9 +1,11 @@
-﻿using System;
+//@CodeCopy
+//MdStart
+using System;
 using MusicStore.Contracts.Client;
 
 namespace MusicStore.Logic
 {
-    public static class Factory
+	public static class Factory
     {
         public enum PersistenceType
         {
@@ -12,6 +14,7 @@ namespace MusicStore.Logic
             Ser,
         }
         public static PersistenceType Persistence { get; set; } = Factory.PersistenceType.Csv;
+
         private static DataContext.IContext CreateContext()
         {
             DataContext.IContext result = null;
@@ -80,29 +83,29 @@ namespace MusicStore.Logic
         {
             return new Controllers.Persistence.GenreController(CreateContext());
         }
-        public static IControllerAccess<Contracts.Persistence.IGenre> CreateGenreController(object sharedController)
-        {
-            if (sharedController == null)
-                throw new ArgumentNullException(nameof(sharedController));
+		public static IControllerAccess<Contracts.Persistence.IGenre> CreateGenreController(object sharedController)
+		{
+			if (sharedController == null)
+				throw new ArgumentNullException(nameof(sharedController));
 
-            Controllers.ControllerObject controller = (Controllers.ControllerObject)sharedController;
+			Controllers.ControllerObject controller = (Controllers.ControllerObject)sharedController;
 
-            return new Controllers.Persistence.GenreController(controller);
-        }
+			return new Controllers.Persistence.GenreController(controller);
+		}
 
-        public static IControllerAccess<Contracts.Persistence.IArtist> CreateArtistController()
-        {
-            return new Controllers.Persistence.ArtistController(CreateContext());
-        }
-        public static IControllerAccess<Contracts.Persistence.IArtist> CreateArtistController(object sharedController)
-        {
-            if (sharedController == null)
-                throw new ArgumentNullException(nameof(sharedController));
+		public static IControllerAccess<Contracts.Persistence.IArtist> CreateArtistController()
+		{
+			return new Controllers.Persistence.ArtistController(CreateContext());
+		}
+		public static IControllerAccess<Contracts.Persistence.IArtist> CreateArtistController(object sharedController)
+		{
+			if (sharedController == null)
+				throw new ArgumentNullException(nameof(sharedController));
 
-            Controllers.ControllerObject controller = (Controllers.ControllerObject)sharedController;
+			Controllers.ControllerObject controller = (Controllers.ControllerObject)sharedController;
 
-            return new Controllers.Persistence.ArtistController(controller);
-        }
+			return new Controllers.Persistence.ArtistController(controller);
+		}
 
         public static IControllerAccess<Contracts.Persistence.IAlbum> CreateAlbumController()
         {
@@ -133,3 +136,4 @@ namespace MusicStore.Logic
         }
     }
 }
+//MdEnd

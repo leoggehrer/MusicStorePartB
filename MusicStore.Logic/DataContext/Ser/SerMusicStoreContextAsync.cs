@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿//@BaseCode
+//MdStart
+using System.Threading.Tasks;
 
 namespace MusicStore.Logic.DataContext.Ser
 {
@@ -18,3 +20,4 @@ namespace MusicStore.Logic.DataContext.Ser
         #endregion Async-Methods
     }
 }
+//MdEnd
