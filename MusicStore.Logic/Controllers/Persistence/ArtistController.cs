@@ -5,18 +5,29 @@ using System.Collections.Generic;
 
 namespace MusicStore.Logic.Controllers.Persistence
 {
-    internal partial class ArtistController : MusicStoreController<Entities.Persistence.Artist, Contracts.Persistence.IArtist>
-	{
+    /// <summary>
+    /// This class implements the specified controller for the entity 'Artist'.
+    /// </summary>
+    internal partial class ArtistController : MusicStoreController<Contracts.Persistence.IArtist, Entities.Persistence.Artist>
+    {
         protected override IEnumerable<Entities.Persistence.Artist> Set => MusicStoreContext.Artists;
 
-		public ArtistController(IContext context)
+        /// <summary>
+        /// This constructor creates an instance and takes over the context assigned to it.
+        /// </summary>
+        /// <param name="context">Context assigned to the controller.</param>
+        public ArtistController(IContext context)
             : base(context)
         {
         }
+        /// <summary>
+        /// This constructor creates an instance and takes over the context of another controller.
+        /// </summary>
+        /// <param name="controller">The controller object from which the context is taken.</param>
         public ArtistController(ControllerObject controller)
-			: base(controller)
-		{
-		}
-	}
+            : base(controller)
+        {
+        }
+    }
 }
 //MdEnd

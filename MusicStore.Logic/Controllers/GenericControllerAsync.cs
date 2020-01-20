@@ -4,10 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonBase.Extensions;
+using MusicStore.Contracts.Client;
 
 namespace MusicStore.Logic.Controllers
 {
-    internal abstract partial class GenericController<E, I>
+    internal abstract partial class GenericController<I, E> : ControllerObject, IControllerAccess<I>
+        where I : Contracts.IIdentifiable
+        where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
     {
         #region Async-Methods
         public Task<int> CountAsync()
@@ -49,10 +53,18 @@ namespace MusicStore.Logic.Controllers
         {
             return Task.FromResult(0);
         }
-        public virtual async Task<I> InsertAsync(I entity)
+        public virtual Task<I> InsertAsync(I entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            entity.CheckArgument(nameof(entity));
+
+            var entityModel = new E();
+
+            entityModel.CopyProperties(entity);
+            return InsertAsync(entityModel);
+        }
+        public virtual async Task<I> InsertAsync(E entity)
+        {
+            entity.CheckArgument(nameof(entity));
 
             await BeforeInsertingAsync(entity);
             var result = await Context.InsertAsync<I, E>(entity);
@@ -68,22 +80,31 @@ namespace MusicStore.Logic.Controllers
         {
             return Task.FromResult(0);
         }
-        public virtual async Task UpdateAsync(I entity)
+        public virtual async Task<I> UpdateAsync(I entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            entity.CheckArgument(nameof(entity));
 
-            await BeforeUpdatingAsync(entity);
-            var updateEntity = await Context.UpdateAsync<I, E>(entity);
+            var entityModel = Set.SingleOrDefault(i => i.Id == entity.Id);
 
-            if (updateEntity != null)
+            if (entityModel != null)
             {
-                await AfterUpdatedAsync(updateEntity);
+                entityModel.CopyProperties(entity);
+                var result = await UpdateAsync(entityModel);
+                return result;
             }
             else
             {
                 throw new Exception("Entity can't find!");
             }
+        }
+        public virtual async Task<I> UpdateAsync(E entity)
+        {
+            entity.CheckArgument(nameof(entity));
+
+            await BeforeUpdatingAsync(entity);
+            var result = await Context.UpdateAsync<I, E>(entity);
+            await AfterUpdatedAsync(entity);
+            return result;
         }
         protected virtual Task AfterUpdatedAsync(E entity)
         {

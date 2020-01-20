@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommonBase.Extensions;
 using MusicStore.Contracts.Client;
 using MusicStore.Logic.DataContext;
 
@@ -14,19 +15,27 @@ namespace MusicStore.Logic.Controllers
     /// </summary>
     /// <typeparam name="E">The entity type of element in the controller.</typeparam>
     /// <typeparam name="I">The interface type which implements the entity.</typeparam>
-    internal abstract partial class GenericController<E, I> : ControllerObject, IControllerAccess<I>
-        where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
+    internal abstract partial class GenericController<I, E> : ControllerObject, IControllerAccess<I>
         where I : Contracts.IIdentifiable
+        where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
     {
         protected abstract IEnumerable<E> Set { get; }
 
+        /// <summary>
+        /// This constructor creates an instance and takes over the context assigned to it.
+        /// </summary>
+        /// <param name="context">Context assigned to the controller.</param>
         protected GenericController(IContext context)
             : base(context)
         {
 
         }
-        protected GenericController(ControllerObject controllerObject)
-            : base(controllerObject)
+        /// <summary>
+        /// This constructor creates an instance and takes over the context of another controller.
+        /// </summary>
+        /// <param name="controller">The controller object from which the context is taken.</param>
+        protected GenericController(ControllerObject controller)
+            : base(controller)
         {
 
         }
@@ -67,15 +76,22 @@ namespace MusicStore.Logic.Controllers
             return new E();
         }
 
-        protected virtual void BeforeInserting(I entity)
+        protected virtual void BeforeInserting(E entity)
         {
-
         }
         /// <inheritdoc />
         public virtual I Insert(I entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            entity.CheckArgument(nameof(entity));
+
+            var entityModel = new E();
+
+            entityModel.CopyProperties(entity);
+            return Insert(entityModel);
+        }
+        public virtual I Insert(E entity)
+        {
+            entity.CheckArgument(nameof(entity));
 
             BeforeInserting(entity);
             var result = Context.Insert<I, E>(entity);
@@ -84,18 +100,24 @@ namespace MusicStore.Logic.Controllers
         }
         protected virtual void AfterInserted(E entity)
         {
-
         }
 
-        protected virtual void BeforeUpdating(I entity)
+        protected virtual void BeforeUpdating(E entity)
         {
-
         }
         /// <inheritdoc />
-        public virtual void Update(I entity)
+        public virtual I Update(I entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            entity.CheckArgument(nameof(entity));
+
+            var entityModel = new E();
+
+            entityModel.CopyProperties(entity);
+            return Update(entityModel);
+        }
+        public virtual I Update(E entity)
+        {
+            entity.CheckArgument(nameof(entity));
 
             BeforeUpdating(entity);
             var updateEntity = Context.Update<I, E>(entity);
@@ -108,6 +130,7 @@ namespace MusicStore.Logic.Controllers
             {
                 throw new Exception("Entity can't find!");
             }
+            return updateEntity;
         }
         protected virtual void AfterUpdated(E entity)
         {
@@ -134,10 +157,20 @@ namespace MusicStore.Logic.Controllers
 
         }
 
+        protected virtual void BeforeSaveChanges()
+        {
+
+        }
         /// <inheritdoc />
         public void SaveChanges()
         {
+            BeforeSaveChanges();
             Context.Save();
+            AfterSaveChanges();
+        }
+        protected virtual void AfterSaveChanges()
+        {
+
         }
         #endregion Sync-Methods
     }

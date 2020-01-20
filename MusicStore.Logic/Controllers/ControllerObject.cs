@@ -5,27 +5,38 @@ using MusicStore.Logic.DataContext;
 
 namespace MusicStore.Logic.Controllers
 {
+    /// <summary>
+    /// This class is the base class of all controller classes and takes over the management of the context.
+    /// </summary>
     internal abstract partial class ControllerObject : IDisposable
     {
-		private bool contextDispose;
+        private bool contextDispose;
         protected IContext Context { get; private set; }
 
+        /// <summary>
+        /// This constructor creates an instance and takes over the context assigned to it.
+        /// </summary>
+        /// <param name="context">Context assigned to the controller.</param>
         protected ControllerObject(IContext context)
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
             Context = context;
-			contextDispose = true;
+            contextDispose = true;
         }
-		protected ControllerObject(ControllerObject controller)
-		{
-			if (controller == null)
-				throw new ArgumentNullException(nameof(controller));
+        /// <summary>
+        /// This constructor creates an instance and takes over the context of another controller.
+        /// </summary>
+        /// <param name="controller">The controller object from which the context is taken.</param>
+        protected ControllerObject(ControllerObject controller)
+        {
+            if (controller == null)
+                throw new ArgumentNullException(nameof(controller));
 
-			Context = controller.Context;
-			contextDispose = false;
-		}
+            Context = controller.Context;
+            contextDispose = false;
+        }
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -37,15 +48,15 @@ namespace MusicStore.Logic.Controllers
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-					if (contextDispose && Context != null)
-					{
-						Context.Dispose();
-					}
+                    if (contextDispose && Context != null)
+                    {
+                        Context.Dispose();
+                    }
                 }
 
-				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-				// TODO: set large fields to null.
-				Context = null;
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+                Context = null;
                 disposedValue = true;
             }
         }

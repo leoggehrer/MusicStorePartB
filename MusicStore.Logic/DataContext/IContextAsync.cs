@@ -18,11 +18,11 @@ namespace MusicStore.Logic.DataContext
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();
 
-        Task<E> InsertAsync<I, E>(I entity)
+        Task<E> InsertAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();
 
-        Task<E> UpdateAsync<I, E>(I entity)
+        Task<E> UpdateAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();
 

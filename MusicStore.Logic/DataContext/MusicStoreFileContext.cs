@@ -1,4 +1,6 @@
-﻿using System;
+//@CodeCopy
+//MdStart
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommonBase.Extensions;
@@ -8,13 +10,13 @@ namespace MusicStore.Logic.DataContext
     abstract partial class MusicStoreFileContext : FileContext, IMusicStoreContext
     {
         private readonly List<Entities.Persistence.Genre> genres = null;
-        public IEnumerable<Entities.Persistence.Genre> Genres => genres;
+        public IQueryable<Entities.Persistence.Genre> Genres => genres.AsQueryable<Entities.Persistence.Genre>();
         private readonly List<Entities.Persistence.Artist> artists = null;
-        public IEnumerable<Entities.Persistence.Artist> Artists => artists;
+        public IQueryable<Entities.Persistence.Artist> Artists => artists.AsQueryable<Entities.Persistence.Artist>();
         private readonly List<Entities.Persistence.Album> albums = null;
-        public IEnumerable<Entities.Persistence.Album> Albums => albums;
+        public IQueryable<Entities.Persistence.Album> Albums => albums.AsQueryable<Entities.Persistence.Album>();
         private readonly List<Entities.Persistence.Track> tracks = null;
-        public IEnumerable<Entities.Persistence.Track> Tracks => tracks;
+        public IQueryable<Entities.Persistence.Track> Tracks => tracks.AsQueryable<Entities.Persistence.Track>();
 
         public MusicStoreFileContext()
         {
@@ -22,7 +24,6 @@ namespace MusicStore.Logic.DataContext
             artists = LoadEntities<Entities.Persistence.Artist>();
             albums = LoadEntities<Entities.Persistence.Album>();
             tracks = LoadEntities<Entities.Persistence.Track>();
-            //LoadRelations();
         }
         #region Load methods
         protected abstract List<T> LoadEntities<T>()
@@ -63,7 +64,7 @@ namespace MusicStore.Logic.DataContext
         {
             return new E();
         }
-        public override E Insert<I, E>(I entity)
+        public override E Insert<I, E>(E entity)
         {
             entity.CheckArgument(nameof(entity));
 
@@ -74,7 +75,7 @@ namespace MusicStore.Logic.DataContext
             Set<I, E>().Add(result);
             return result;
         }
-        public override E Update<I, E>(I entity)
+        public override E Update<I, E>(E entity)
         {
             entity.CheckArgument(nameof(entity));
 
@@ -138,3 +139,4 @@ namespace MusicStore.Logic.DataContext
         #endregion Helpers
     }
 }
+//MdEnd
