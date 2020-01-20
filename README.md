@@ -54,7 +54,8 @@ namespace MusicStore.Contracts.Client
         /// The entity is being tracked by the context and exists in the repository, and some or all of its property values have been modified.
         /// </summary>
         /// <param name="entity">The entity which is to be updated.</param>
-        Task UpdateAsync(T entity);
+        /// <returns>The modified entity.</returns>
+        Task<T> UpdateAsync(T entity);
         /// <summary>
         /// Removes the entity from the repository with the appropriate identity.
         /// </summary>
@@ -86,10 +87,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommonBase.Extensions;
+using MusicStore.Contracts.Client;
 
 namespace MusicStore.Logic.Controllers
 {
-    internal abstract partial class GenericController<E, I>
+    internal abstract partial class GenericController<I, E> : ControllerObject, IControllerAccess<I>
+        where I : Contracts.IIdentifiable
+        where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
     {
         #region Async-Methods
         public Task<int> CountAsync()
@@ -131,10 +136,18 @@ namespace MusicStore.Logic.Controllers
         {
             return Task.FromResult(0);
         }
-        public virtual async Task<I> InsertAsync(I entity)
+        public virtual Task<I> InsertAsync(I entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            entity.CheckArgument(nameof(entity));
+
+            var entityModel = new E();
+
+            entityModel.CopyProperties(entity);
+            return InsertAsync(entityModel);
+        }
+        public virtual async Task<I> InsertAsync(E entity)
+        {
+            entity.CheckArgument(nameof(entity));
 
             await BeforeInsertingAsync(entity);
             var result = await Context.InsertAsync<I, E>(entity);
@@ -150,22 +163,31 @@ namespace MusicStore.Logic.Controllers
         {
             return Task.FromResult(0);
         }
-        public virtual async Task UpdateAsync(I entity)
+        public virtual async Task<I> UpdateAsync(I entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            entity.CheckArgument(nameof(entity));
 
-            await BeforeUpdatingAsync(entity);
-            var updateEntity = await Context.UpdateAsync<I, E>(entity);
+            var entityModel = Set.SingleOrDefault(i => i.Id == entity.Id);
 
-            if (updateEntity != null)
+            if (entityModel != null)
             {
-                await AfterUpdatedAsync(updateEntity);
+                entityModel.CopyProperties(entity);
+                var result = await UpdateAsync(entityModel);
+                return result;
             }
             else
             {
                 throw new Exception("Entity can't find!");
             }
+        }
+        public virtual async Task<I> UpdateAsync(E entity)
+        {
+            entity.CheckArgument(nameof(entity));
+
+            await BeforeUpdatingAsync(entity);
+            var result = await Context.UpdateAsync<I, E>(entity);
+            await AfterUpdatedAsync(entity);
+            return result;
         }
         protected virtual Task AfterUpdatedAsync(E entity)
         {
@@ -225,11 +247,11 @@ namespace MusicStore.Logic.DataContext
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();
 
-        Task<E> InsertAsync<I, E>(I entity)
+        Task<E> InsertAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();
 
-        Task<E> UpdateAsync<I, E>(I entity)
+        Task<E> UpdateAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();
 
@@ -261,10 +283,10 @@ namespace MusicStore.Logic.DataContext
         public abstract Task<E> CreateAsync<I, E>()
             where I : IIdentifiable
             where E : IdentityObject, I, ICopyable<I>, new();
-        public abstract Task<E> InsertAsync<I, E>(I entity)
+        public abstract Task<E> InsertAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();
-        public abstract Task<E> UpdateAsync<I, E>(I entity)
+        public abstract Task<E> UpdateAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, I, ICopyable<I>, new();
         public abstract Task<E> DeleteAsync<I, E>(int id)
@@ -304,73 +326,24 @@ namespace MusicStore.Logic.DataContext.Db
         {
             return Task.Run(() => new E());
         }
-
-        public Task<E> InsertAsync<I, E>(I entity)
+        public Task<E> InsertAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new()
         {
             return Task.Run(() =>
             {
-                E newEntity = new E();
-
-                newEntity.CopyProperties(entity);
-                newEntity.Id = 0;
-                try
-                {
-                    if (Entry(newEntity).State == EntityState.Detached)
-                    {
-                        Entry(newEntity).State = EntityState.Added;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Entry(newEntity).State = EntityState.Detached;
-                    throw ex;
-                }
-                return newEntity;
+                Set<E>().Add(entity);
+                return entity;
             });
         }
-        public Task<E> UpdateAsync<I, E>(I entity)
+        public Task<E> UpdateAsync<I, E>(E entity)
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new()
         {
             return Task.Run(() =>
             {
-                var updEntity = new E();
-
-                updEntity.CopyProperties(entity);
-
-                var omEntity = Entry(updEntity);
-
-                if (omEntity.State == EntityState.Detached)
-                {
-                    E attachedEntity = Set<E>().Local.SingleOrDefault(e => e.Id == entity.Id);
-
-                    if (attachedEntity != null)
-                    {
-                        Entry(attachedEntity).CurrentValues.SetValues(entity);
-                        Entry(attachedEntity).State = EntityState.Modified;
-                    }
-                    else
-                    {
-                        omEntity.State = EntityState.Modified;
-                    }
-                }
-                else
-                {
-                    EntityState saveState = omEntity.State;
-
-                    try
-                    {
-                        Entry(entity).State = EntityState.Modified;
-                    }
-                    catch
-                    {
-                        Entry(entity).State = saveState;
-                        throw;
-                    }
-                }
-                return omEntity.Entity;
+                Set<E>().Update(entity);
+                return entity;
             });
         }
         public Task<E> DeleteAsync<I, E>(int id)
@@ -388,7 +361,6 @@ namespace MusicStore.Logic.DataContext.Db
                 return result;
             });
         }
-
         public Task SaveAsync()
         {
             return SaveChangesAsync();
